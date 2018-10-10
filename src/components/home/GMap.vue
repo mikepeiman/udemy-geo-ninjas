@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import firebase from 'firebase'
+
 export default {
   name: 'GMap',
   data() {
@@ -31,6 +33,7 @@ export default {
   mounted() {
     // call a function to render map as we may want to render it at other points in the lifecycle also
     this.renderMap()
+    console.log(firebase.auth().currentUser)
   }
 }
 </script>
