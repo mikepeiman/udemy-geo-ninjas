@@ -5,7 +5,8 @@
       <a href="" class="brand-logo">GeoNinjas</a>
       <ul class="navitems right">
         <router-link to="Signup">Signup</router-link>
-        <li><a href="">Login</a></li>
+        <li><a>Login</a></li>
+        <router-link to="Signup" @click="logout">Logout</router-link>
       </ul>
     </div>
   </div>
@@ -13,11 +14,20 @@
 </template>
 
 <script>
+import firebase from 'firebase'
+
 export default {
   name: 'Navbar',
   data() {
     return {
 
+    }
+  },
+  methods: {
+    logout() {
+      firebase.auth().signOut().then(() => {
+        this.$router.push({ name: 'Signup' })
+      })
     }
   }
 }
