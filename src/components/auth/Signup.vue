@@ -14,7 +14,7 @@
           <label for="alias">Alias:</label>
           <input type="text" name="alias" v-model="alias">
       </div>
-      <p class="red-text center" v-if="feedback">{{ feedback }}</p>
+          <p class="red-text center" v-if="feedback">{{ feedback }}</p>
           <div class="field center">
             <button class="btn deep-purple">Signup</button>
           </div>
@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     signup() {
-      if(this.alias && this.email && this.password) {
+      if (this.alias && this.email && this.password) {
         this.slug = slugify(this.alias, {
           replacement: '-',
           remove: /[$*_+=~.()'"!\-:@]/g,
@@ -49,24 +49,26 @@ export default {
         console.log(this.slug)
         let ref = db.collection('users').doc(this.slug)
         ref.get().then(doc => {
-          if(doc.exists) {
+          if (doc.exists) {
             this.feedback = 'This alias already exists, please pick something different'
           } else {
             firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
-            .then(cred => {
-              ref.set({
-                alias: this.alias,
-                geolocation: null,
-                user_id: cred.user.uid
+              .then(cred => {
+                ref.set({
+                  alias: this.alias,
+                  geolocation: null,
+                  user_id: cred.user.uid
+                })
               })
-            })
-            .then(() => {
-              this.$router.push({ name: 'GMap' })
-            })
-            .catch(err => {
-              console.log(err)
-              this.feedback = err.message
-            })
+              .then(() => {
+                this.$router.push({
+                  name: 'GMap'
+                })
+              })
+              .catch(err => {
+                console.log(err)
+                this.feedback = err.message
+              })
             this.feedback = 'This alias is available'
           }
         })
@@ -83,11 +85,12 @@ export default {
   max-width: 50%;
   margin-top: 5em;
 }
+
 .signup h2 {
   font-size: 2.4em;
 }
+
 .signup .field {
   margin-bottom: 1em;
 }
 </style>
-

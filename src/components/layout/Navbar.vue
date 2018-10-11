@@ -4,9 +4,9 @@
     <div class="navitems container">
       <a href="" class="brand-logo">GeoNinjas</a>
       <ul class="navitems right">
-        <router-link to="Signup">Signup</router-link>
-        <li><a>Login</a></li>
-        <router-link to="Signup" @click="logout">Logout</router-link>
+        <li><router-link to="Signup">Signup</router-link></li>
+        <li><router-link to="Login">Login</router-link></li>
+        <li><router-link to="Signup" @click="logout">Logout</router-link></li>
       </ul>
     </div>
   </div>
