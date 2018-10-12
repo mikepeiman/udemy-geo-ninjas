@@ -1,19 +1,26 @@
 <template>
-  <div class="view-profile container">
-    <div class="card" v-if="profile">
-      <h2 class="deep-purple-text center">{{ profile.alias }}'s Wall</h2>
-      <ul class="comments collection">
-        <li>comment</li>
-      </ul>
-      <form @submit.prevent="addComment">
-        <div class="field">
-          <label for="comment">Add a comment</label>
-          <input type="text" name="comment" v-model="newComment">
-          <p v-if="feedback" class="red-text center">{{ feedback }}</p>
+<div class="view-profile container">
+  <div class="card" v-if="profile">
+    <h2 class="deep-purple-text center">{{ profile.alias }}'s Wall</h2>
+    <ul class="comments collection">
+      <li v-for="(comment, index) in comments" :key="index">
+        <div class="deep-purple-text">
+          {{ comment.from }}
         </div>
-      </form>
-    </div>
+        <div class="grey-text text-darken-2">
+          {{ comment.content }}
+        </div>
+        </li>
+    </ul>
+    <form @submit.prevent="addComment">
+      <div class="field">
+        <label for="comment">Add a comment</label>
+        <input type="text" name="comment" v-model="newComment">
+        <p v-if="feedback" class="red-text center">{{ feedback }}</p>
+      </div>
+    </form>
   </div>
+</div>
 </template>
 
 <script>
@@ -27,33 +34,50 @@ export default {
       profile: null,
       newComment: null,
       feedback: null,
-      user: null
+      user: null,
+      comments: []
     }
   },
   created() {
     let ref = db.collection('users')
 
     // get current user
-ref.where('user_id', '==', firebase.auth().currentUser.uid).get()
-.then(snapshot => {
-  snapshot.forEach(doc => {
-  this.user = doc.data(),
-  this.user.id = doc.id
-  })
-})
+    ref.where('user_id', '==', firebase.auth().currentUser.uid).get()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          this.user = doc.data(),
+            this.user.id = doc.id
+        })
+      })  
 
+    // profile data
     ref.doc(this.$route.params.id).get()
-    .then(user => {
-      this.profile = user.data()
-    })
+      .then(user => {
+        this.profile = user.data()
+      })
+
+      // comments
+      db.collection('comments').where('to', '==', this.$route.params.id)
+      .onSnapshot((snapshot) => {
+        snapshot.docChanges().forEach(change => {
+          if(change.type == 'added') {
+            this.comments.unshift({
+              from: change.doc.data().from,
+              content: change.doc.data().content
+            })
+          } else {
+
+          }
+        })
+      })
   },
   methods: {
     addComment() {
-      if(this.newComment) {
+      if (this.newComment) {
         this.feedback = null
         db.collection('comments').add({
           to: this.$route.params.id, // when on a profile page, can get id from URL
-          from: this.user.id,
+          from: this.user.alias,
           content: this.newComment,
           time: Date.now()
         }).then(() => {
@@ -66,3 +90,20 @@ ref.where('user_id', '==', firebase.auth().currentUser.uid).get()
   }
 }
 </script>
+
+<style>
+.view-profile .card {
+  padding: 1.25em;
+  margin-top: 5em;
+}
+.view-profile h2 {
+  font-size: 2em;
+  margin-top: 0;
+}
+.view-profile li {
+  padding: 1em;
+  border-bottom: 1px solid #eee;
+}
+
+</style>
+
