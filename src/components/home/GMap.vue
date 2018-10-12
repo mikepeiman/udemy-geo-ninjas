@@ -29,6 +29,26 @@ export default {
         streetViewControl: false
       })
 
+      db.collection('users').get().then(users => {
+        users.docs.forEach(doc => {
+          let data = doc.data()
+          if(data.geolocation) {
+            // create GMaps marker
+            let marker = new google.maps.Marker({
+              position: {
+                lat: data.geolocation.lat,
+                lng: data.geolocation.lng
+              },
+              map // map: map (see the map object above) can use simply 'map' due to same name
+            })
+            // add click event to marker
+            marker.addListener('click', () => {
+              this.$router.push({ name: 'ViewProfile', params: { id: doc.id }})
+              console.log('Clicked marker: ', doc.id)
+            })
+          }
+        })
+      })
     }
   },
   mounted() {
