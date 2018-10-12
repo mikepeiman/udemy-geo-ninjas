@@ -6,6 +6,7 @@
 
 <script>
 import firebase from 'firebase'
+import db from '@/firebase/init'
 
 export default {
   name: 'GMap',
@@ -31,9 +32,47 @@ export default {
     }
   },
   mounted() {
+    // get current user
+    let user = firebase.auth().currentUser
+    console.log("User: ", user)
+    // get user geolocation
+    // check if user browser supports this API
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        this.lat = pos.coords.latitude
+        this.lng = pos.coords.longitude
+
+        // find user record and update geolocation property
+        db.collection('users').where('user_id', '==', user.uid).get()
+          .then(snapshot => {
+            snapshot.forEach((doc) => {
+              console.log("Doc: ", doc, doc.id)
+              db.collection('users').doc(doc.id).update({
+                geolocation: {
+                  lat: pos.coords.latitude,
+                  lng: pos.coords.longitude
+                }
+              })
+            })
+          }).then(() => {
+            this.renderMap()
+          })
+
+      }, (err) => {
+        console.log(err)
+        this.renderMap()
+      }, {
+        maximumAge: 60000,
+        timeout: 3000
+      })
+
+    } else {
+      // center map by default values; no user geolocation coords available
+      this.renderMap()
+    }
+
     // call a function to render map as we may want to render it at other points in the lifecycle also
-    this.renderMap()
-    console.log(firebase.auth().currentUser)
+
   }
 }
 </script>

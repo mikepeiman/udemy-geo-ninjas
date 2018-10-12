@@ -3,10 +3,11 @@
   <div class="deep-purple darken-1">
     <div class="navitems container">
       <router-link :to="{name: 'GMap' }">GeoNinjas!</router-link>
+      <!-- <router-link to="GMap">GeoNinjas!</router-link> -->
       <ul class="navitems right">
         <li><router-link to="Signup">Signup</router-link></li>
         <li><router-link to="Login">Login</router-link></li>
-        <li><router-link to="Signup" @click="logout">Logout</router-link></li>
+        <li><router-link to="Login" @click="logout">Logout</router-link></li>
       </ul>
     </div>
   </div>
@@ -43,6 +44,7 @@ export default {
 .navitems {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 .navitems li {
   margin: 1em;

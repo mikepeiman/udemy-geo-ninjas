@@ -37,7 +37,7 @@ import firebase from 'firebase'
         if(this.email && this.password) {
           this.feedback = null
           firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(cred => {
-            console.log(cred.user)
+            console.log(cred.user, cred)
             this.$router.push({ name: 'GMap' })
           }).catch(err => {
             this.feedback = err.message
