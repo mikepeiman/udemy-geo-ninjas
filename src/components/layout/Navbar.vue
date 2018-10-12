@@ -2,12 +2,13 @@
 <div class="navbar">
   <div class="deep-purple darken-1">
     <div class="navitems container">
-      <router-link :to="{name: 'GMap' }">GeoNinjas!</router-link>
+      <router-link :to="{name: 'GMap' }" class="brand-logo left">GeoNinjas!</router-link>
       <!-- <router-link to="GMap">GeoNinjas!</router-link> -->
       <ul class="navitems right">
-        <li><router-link to="Signup">Signup</router-link></li>
-        <li><router-link to="Login">Login</router-link></li>
-        <li><router-link to="Login" @click="logout">Logout</router-link></li>
+        <li v-if="!user"><router-link to="Signup">Signup</router-link></li>
+        <li v-if="!user"><router-link to="Login">Login</router-link></li>
+        <li v-if="user"><a>{{ user.email }}</a></li>
+        <li v-if="user"><a @click="logout">Logout</a></li>
       </ul>
     </div>
   </div>
@@ -21,15 +22,26 @@ export default {
   name: 'Navbar',
   data() {
     return {
-
+      user: null
     }
   },
   methods: {
     logout() {
+      console.log('logout click')
       firebase.auth().signOut().then(() => {
         this.$router.push({ name: 'Login' })
       })
     }
+  },
+  created() {
+    // let user = firebase.auth().currentUser
+    firebase.auth().onAuthStateChanged((user) => {
+      if(user) {
+        this.user = user
+      } else {
+        this.user = null
+      }
+    })
   }
 }
 </script>
@@ -52,6 +64,7 @@ export default {
 .container a {
   margin: 1em 1em 1em 0;
   color: white;
+  cursor: pointer;
 }
 .container a:hover {
   color: #99bbff;

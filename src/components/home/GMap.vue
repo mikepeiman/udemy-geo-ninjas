@@ -62,7 +62,7 @@ export default {
         console.log(err)
         this.renderMap()
       }, {
-        maximumAge: 60000,
+        maximumAge: 3600000,
         timeout: 3000
       })
 
